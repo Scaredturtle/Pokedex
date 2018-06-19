@@ -1,5 +1,6 @@
 import tkinter as tk
 import os.path
+import pandas
 import json
 import requests
 from bs4 import BeautifulSoup
@@ -12,15 +13,20 @@ class Gather:
         url = 'https://pokemondb.net/pokedex/' + self.pokemon.lower()
         rawHTML = requests.get(url)
         parsedPage = BeautifulSoup(rawHTML.text, 'html.parser')
-        testFile = open('test.txt', 'w')
+        testFile = open('test.json', 'w')
         statTable = parsedPage.find_all("table", {"class":"vitals-table"})[3]
         print(statTable)
-        statTableHeaders = statTable. find_all('th')
-        print(statTableHeaders)
-        for header in statTableHeaders:
-            statNames = []
-            statNames.append(header.get_text())
-        print(statNames)
+        statTableRows = statTable.find_all('tr')
+        print(statTableRows)
+        jsonRows = []
+        for row in statTableRows:
+            for cell in row.find_all(['th', "td"]):
+                if cell.get_text() != '' and cell.get_text() != '\n\n':
+                    jsonRows.append(cell.get_text())
+        
+        json.dump(jsonRows, testFile)
+            
+
         testFile.close()
 
     def dataCheck(self, pokemon):
