@@ -1,35 +1,19 @@
-import tkinter as tk
 import os.path
 import pandas as pd
-import json
 import requests
-from bs4 import BeautifulSoup
-import pprint
-
 
 class Gather:
-    def webGet(self):
-        '''
-        print("retrieving data from web")
-        url = 'https://pokemondb.net/pokedex/' + self.pokemon.lower()
-        rawHTML = requests.get(url)
-        parsedPage = BeautifulSoup(rawHTML.text, 'html.parser')
-        testFile = open('test.json', 'w')
-        statTable = parsedPage.find_all("table", {"class":"vitals-table"})[3]
-        print(statTable)
-        statTableRows = statTable.find_all('tr')
-        print(statTableRows)
-        jsonRows = []
-        for row in statTableRows:
-            for cell in row.find_all(['th', "td"]):
-                if cell.get_text() != '' and cell.get_text() != '\n\n':
-                    jsonRows.append(cell.get_text())
-        
-        json.dump(jsonRows, testFile)
-            
+    def searchInit(self, pokemon, force):
+        self.pokemon = pokemon.lower()
+        self.force = force
+        self.filePath = ".\\data\\"
 
-        testFile.close()
-        '''
+        self.url = 'https://pokemondb.net/pokedex/' + self.pokemon
+        self.csvFile = self.filePath + self.pokemon + ".csv"
+
+        self.dataCheck()
+
+    def webGet(self):
         rawHTML = requests.get(self.url, headers={'User-Agent': 'Mozilla/5.0'})
         testtable = pd.read_html(rawHTML.text)
         #print(testtable[3])
@@ -44,18 +28,16 @@ class Gather:
         
         print(finalTable)
         finalTable.to_csv(self.csvFile, index = None)
+    
+    def localGet(self):
+        pass
 
-    def dataCheck(self, pokemon):
-        self.pokemon = pokemon.lower()
-        fileDirectory = ".\\data\\"
-
-        print(self.pokemon)
-
-        if os.path.exists(fileDirectory + pokemon.lower() + ".csv"):
+    def dataCheck(self):
+        if os.path.exists(self.csvFile) and not self.force:
             print("Data already exists in the database for this Pokemon.")
+        elif os.path.exists(self.csvFile) and self.force:
+            print("Updating tables from web!")
+            self.webGet()
         else:
-            print(fileDirectory + pokemon.lower() +".json File Not Found!")
-            self.url = 'https://pokemondb.net/pokedex/' + self.pokemon
-            self.csvFile = fileDirectory + str(self.pokemon) + ".csv"
-            print(self.url, self.csvFile)
+            print(self.filePath + self.pokemon + ".csv File Not Found!")
             self.webGet()
