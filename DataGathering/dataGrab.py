@@ -25,16 +25,19 @@ class Gather:
             finalTable = rawTable.drop(rawTable.columns[[2, 5]], axis = 1)
         if len(rawTable.columns) <= 5:
             finalTable = rawTable.drop(rawTable.columns[2], axis = 1)
-        
+
         print(finalTable)
         finalTable.to_csv(self.csvFile, index = None)
-    
+
     def localGet(self):
-        pass
+        print('Attempting to grab local data.')
+        pokeData = pd.read_csv(self.csvFile)
+        print(pokeData)
 
     def dataCheck(self):
         if os.path.exists(self.csvFile) and not self.force:
             print("Data already exists in the database for this Pokemon.")
+            self.localGet()
         elif os.path.exists(self.csvFile) and self.force:
             print("Updating tables from web!")
             self.webGet()
