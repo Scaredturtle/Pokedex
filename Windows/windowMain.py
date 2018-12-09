@@ -1,14 +1,20 @@
-from PyQt5.QtWidgets import QLabel, QMainWindow, QWidget, QLineEdit, QPushButton, QVBoxLayout, QCheckBox
+from PyQt5.QtWidgets import QLabel, QMainWindow, QWidget, QLineEdit, QPushButton, QVBoxLayout, QCheckBox, QDesktopWidget
 import DataGathering.dataGrab as gather
+import math
 
 class windowMain(QMainWindow):
-    def __init__(self):
+    def __init__(self, resolution):
         super().__init__()
 
         self.data = gather.Gather()
         self.windowBk = "background-color: red;"
         self.widgetBk = "background-color: cyan;"
         self.setWindowTitle("Improved Pokedex")
+        self.resolution = resolution
+        self.windowWidth = 800
+        self.windowHeight = 600
+        self.hpos = (self.resolution.width() - self.windowWidth)/2
+        self.vpos = (self.resolution.height() - self.windowHeight)/2
 
         self.initUI()
 
@@ -19,7 +25,8 @@ class windowMain(QMainWindow):
         self.searchButton = QPushButton(self)
         self.dataCheckBox = QCheckBox(self)
 
-        self.setGeometry(0, 0, 800, 600)
+        self.resize(self.windowWidth, self.windowHeight)
+        self.move(self.hpos, self.vpos)
 
         self.mainLabel.setText("Pokemon Name:")
         self.mainLabel.setStyleSheet(self.widgetBk)
