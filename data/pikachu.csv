@@ -1,8 +1,8 @@
-0,Base,Min,Max,5
-HP,35,180,274,
-Attack,55,103,229,
-Defense,40,76,196,
-Sp. Atk,50,94,218,
-Sp. Def,50,94,218,
-Speed,90,166,306,
-Total,320,Min,Max,430.0
+0,Base,Min,Max
+HP,35,180,274
+Attack,55,103,229
+Defense,40,76,196
+Sp. Atk,50,94,218
+Sp. Def,50,94,218
+Speed,90,166,306
+Total,320,Min,Max

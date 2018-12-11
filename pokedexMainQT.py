@@ -1,3 +1,4 @@
+import sys
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication
 import Windows.windowMain as mainWindow
@@ -12,4 +13,4 @@ print(resolution.height())
 appWindow = mainWindow.windowMain(resolution)
 appWindow.show()
 
-pokedex.exec_()
+sys.exit(pokedex.exec_())
