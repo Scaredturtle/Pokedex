@@ -1,46 +1,61 @@
-import os.path
+from os import path
+from bs4 import BeautifulSoup as soup
 import pandas as pd
 import requests
+import data.pokeDatabase as sqldata
 
 class Gather:
     def searchInit(self, pokemon, force):
         self.pokemon = pokemon.lower()
         self.force = force
-        self.filePath = ".\\data\\"
+        self.filePath = path.join(".", "data")
 
         self.url = 'https://pokemondb.net/pokedex/' + self.pokemon
-        self.csvFile = self.filePath + self.pokemon + ".csv"
+        self.csvFile = path.join(self.filePath, str(self.pokemon + ".csv"))
+        print(self.csvFile)
+
+        self.pokesql = sqldata.pokeData()
+        self.database, self.cur = self.pokesql.databaseSetup()
 
         self.dataCheck()
 
     def webGet(self):
         rawHTML = requests.get(self.url, headers={'User-Agent': 'Mozilla/5.0'})
-        testtable = pd.read_html(rawHTML.text)
+        testtable = pd.read_html(rawHTML.text, index_col = 0)
         #print(testtable[3])
-        rawTable = testtable[3]
+        rawTable = testtable[3].rename(columns = {0 : 'Stat', 1 : 'Base', 3 : 'Min', 4 : 'Max'})
+        print(rawTable)
+        print(len(rawTable))
         #testtable[3].to_csv(self.csvFile, index=None)
         if len(rawTable.columns) == 7:
-            finalTable = rawTable.drop(rawTable.columns[[2, 5, 6]], axis = 1)
+            finalTable = rawTable.drop(rawTable.columns[[1, 4:]], axis = 1)
         if len(rawTable.columns) == 6:
-            finalTable = rawTable.drop(rawTable.columns[[2, 5]], axis = 1)
+            finalTable = rawTable.drop(rawTable.columns[[1, 4]], axis = 1)
         if len(rawTable.columns) <= 5:
-            finalTable = rawTable.drop(rawTable.columns[2], axis = 1)
+            finalTable = rawTable.drop(rawTable.columns[1], axis = 1)
 
         print(finalTable)
-        finalTable.to_csv(self.csvFile, index = None)
-
+        print(len(finalTable))
+        finalTable.to_csv(self.csvFile)
+        finalTable.to_sql(self.pokemon, self.database, if_exists="replace")
+        sqlTest = pd.read_sql_query('SELECT * FROM %s' %self.pokemon, self.database)
+        print(sqlTest)
+        print("The above was a test pull from the SQL tables")
+        
     def localGet(self):
         print('Attempting to grab local data.')
         pokeData = pd.read_csv(self.csvFile)
         print(pokeData)
 
     def dataCheck(self):
-        if os.path.exists(self.csvFile) and not self.force:
+        if path.exists(self.csvFile) and not self.force:
             print("Data already exists in the database for this Pokemon.")
             self.localGet()
-        elif os.path.exists(self.csvFile) and self.force:
+        elif path.exists(self.csvFile) and self.force:
             print("Updating tables from web!")
             self.webGet()
         else:
-            print(self.filePath + self.pokemon + ".csv File Not Found!")
+            print(self.csvFile + " File Not Found!")
             self.webGet()
+
+        self.pokesql.closeDatabase()
