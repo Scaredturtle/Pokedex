@@ -46,8 +46,10 @@ class Gather:
         
     def localGet(self):
         print('Attempting to grab local data.')
-        pokeData = pd.read_csv(self.csvFile)
-        print(pokeData)
+        #pokeData = pd.read_csv(self.csvFile)
+        testSQL = self.cur.execute('SELECT * FROM %s' %self.pokemon)
+        #print(pokeData)
+        print(testSQL)
 
     def dataCheck(self):
         testsql = self.cur.execute("SELECT count(*) from sqlite_master WHERE type='table' and name=?", (self.pokemon,))
@@ -55,13 +57,17 @@ class Gather:
 
         if  testsql == 1 and not self.force:
             print("Table was found in .db file")
+            self.localGet()
         elif testsql == 1 and self.force:
             print("Table was found in .db file; Updating table from the web")
+            self.webGet()
         elif testsql != 1:
             print("Table was not found; Searching web for data")
+            self.webGet()
 
-        self.cur.close()
+        self.pokesql.closeDatabase()
 
+        """
         if path.exists(self.csvFile) and not self.force:
             print("Data already exists in the database for this Pokemon.")
             self.localGet()
@@ -73,3 +79,4 @@ class Gather:
             self.webGet()
 
         self.pokesql.closeDatabase()
+        """
