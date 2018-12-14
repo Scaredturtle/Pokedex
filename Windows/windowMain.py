@@ -43,5 +43,5 @@ class windowMain(QMainWindow):
         self.dataCheckBox.setGeometry(348, 0, 100, 30)
         self.dataCheckBox.setStyleSheet(self.widgetBk)
 
-        self.mainText.returnPressed.connect(lambda: self.data.searchInit(self.mainText.text(), self.dataCheckBox.isChecked()))
-        self.searchButton.clicked.connect(lambda: self.data.searchInit(self.mainText.text(), self.dataCheckBox.isChecked()))
+        self.mainText.returnPressed.connect(lambda: self.data.search_init(self.mainText.text(), self.dataCheckBox.isChecked()))
+        self.searchButton.clicked.connect(lambda: self.data.search_init(self.mainText.text(), self.dataCheckBox.isChecked()))

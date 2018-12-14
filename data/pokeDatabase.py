@@ -3,7 +3,7 @@ from sqlite3 import Error
 from os import path
 
 class pokeData:
-    def databaseSetup(self):
+    def database_setup(self):
         self.dbfile = path.join(".", "data", "pokemon.db")
 
         try:
@@ -14,6 +14,7 @@ class pokeData:
         finally:
             return(self.database, self.cur)
 
-    def closeDatabase(self):
+    def close_database(self):
+        self.database.commit()
         self.cur.close()
         self.database.close()
