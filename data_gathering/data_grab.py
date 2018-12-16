@@ -3,7 +3,9 @@ from os import path
 from bs4 import BeautifulSoup as soup
 import pandas as pd
 import requests
-import data.pokeDatabase as sql_data
+import data.poke_database as sql_data
+import data.table_prep_for_display as model
+from windows import poke_main_window as window
 
 class Gather:
     def search_init(self, pokemon, force):
@@ -44,7 +46,11 @@ class Gather:
         pokemon_sql_table = pd.read_sql_query('SELECT * FROM %s' %self.pokemon, self.database)
         print(pokemon_sql_table)
         #print("The above was a test pull from the SQL tables")
-        return (pokemon_sql_table)
+        #return (pokemon_sql_table)
+        self.arranged_data = model.pokemon_pandas_model(pokemon_sql_table)
+        self.table_window = window.pokedex_main_window()
+        self.table_window.create_table(self.arranged_data)
+
         
     def local_get(self):
         print('Attempting to grab local data.')
@@ -52,7 +58,7 @@ class Gather:
         pokemon_sql_table = pd.read_sql_query('SELECT * FROM %s' %self.pokemon, self.database)
         #print(pokeData)
         print(pokemon_sql_table)
-        return(pokemon_sql_table)
+        #return(pokemon_sql_table)
 
     def create_table_for_window(self, pandas_poke_table):
         pass

@@ -1,15 +1,15 @@
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QApplication
-import Windows.windowMain as mainWindow
+import windows.poke_main_window as main_window
 
 pokedex = QApplication([])
 pokedex.setStyle('Fusion')
-resolution = QtWidgets.QDesktopWidget().screenGeometry()
+#resolution = QtWidgets.QDesktopWidget().screenGeometry()
 #print(resolution.width())
 #print(resolution.height())
 
-appWindow = mainWindow.windowMain(resolution)
+appWindow = main_window.pokedex_main_window()
 appWindow.show()
 
 sys.exit(pokedex.exec_())
